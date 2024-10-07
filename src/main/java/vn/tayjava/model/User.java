@@ -47,4 +47,9 @@ public class User extends BaseEntity {
 
     @Column(name = "language")
     private String language;
+
+    public User(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 }

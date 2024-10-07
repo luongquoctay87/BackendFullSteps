@@ -3,6 +3,7 @@ package vn.tayjava.service;
 import vn.tayjava.controller.request.UserCreationRequest;
 import vn.tayjava.controller.request.UserUpdateRequest;
 import vn.tayjava.controller.response.UserResponse;
+import vn.tayjava.model.User;
 
 import java.util.List;
 
@@ -16,5 +17,5 @@ public interface UserService {
 
     List<UserResponse> getAllUsers(String firstName, String lastName, String email);
 
-    UserResponse getUserById(int userId);
+    User getUserById(int userId);
 }
