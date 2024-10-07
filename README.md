@@ -80,3 +80,124 @@ SendGrid cung cấp nhiều gói dịch vụ khác nhau để phù hợp với n
 - Postmark 
 - SparkPost
 Mỗi dịch vụ đều có điểm mạnh riêng, nhưng SendGrid nổi bật với giao diện thân thiện, dễ sử dụng và khả năng tích hợp API mạnh mẽ.
+
+## 4. Tích hợp SendGrid với Spring Boot
+##### Bước 1: Thiết lập tài khoản SendGrid
+- Tạo tài khoản SendGrid: Đăng ký một tài khoản trên trang web SendGrid.
+- Tạo API Key:
+  - Sau khi đăng nhập, vào phần "API Keys" trong dashboard của SendGrid. 
+  - Tạo một API key và lưu lại để sử dụng trong ứng dụng Spring Boot.
+
+##### Bước 2: Cấu hình ứng dụng Spring Boot
+Để tích hợp SendGrid vào Spring Boot, bạn cần thêm thư viện của SendGrid và cấu hình API key của mình.
+
+**a. Thêm dependency vào pom.xml**
+```xml
+<dependency>
+    <groupId>com.sendgrid</groupId>
+    <artifactId>sendgrid-java</artifactId>
+    <version>4.9.3</version>
+</dependency>
+```
+
+**b. Cấu hình API Key trong application.yml**
+```yml
+spring:
+  sendgrid:
+    apiKey: YOUR_SENDGRID_API_KEY
+```
+
+**c. Tạo cấu hình SendGrid trong Spring Boot**
+```java
+import com.sendgrid.SendGrid;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SendGridConfig {
+
+    @Value("${spring.sendgrid.apiKey}")
+    private String sendGridApiKey;
+
+    @Bean
+    public SendGrid sendGrid() {
+        return new SendGrid(sendGridApiKey);
+    }
+}
+```
+
+##### Bước 3: Tạo Service để gửi email
+Tiếp theo, tạo một service để gửi email sử dụng API của SendGrid.
+```java
+import com.sendgrid.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+
+@Service
+public class EmailService {
+
+    @Autowired
+    private SendGrid sendGrid;
+
+    public String sendEmail(String toEmail, String subject, String body) {
+        Email from = new Email("your_email@example.com"); // Email của bạn
+        Email to = new Email(toEmail);
+
+        Content content = new Content("text/plain", body);
+        Mail mail = new Mail(from, subject, to, content);
+
+        Request request = new Request();
+
+        try {
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+            Response response = sendGrid.api(request);
+
+            // Kiểm tra kết quả phản hồi từ SendGrid
+            if (response.getStatusCode() == 202) {
+                return "Email sent successfully!";
+            } else {
+                return "Failed to send email: " + response.getBody();
+            }
+
+        } catch (IOException e) {
+            return "Error occurred while sending email: " + e.getMessage();
+        }
+    }
+}
+```
+
+##### Bước 4: Sử dụng API để gửi email
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class EmailController {
+
+    @Autowired
+    private EmailService emailService;
+
+    @GetMapping("/send-email")
+    public String sendEmail(@RequestParam String toEmail, @RequestParam String subject, @RequestParam String body) {
+        return emailService.sendEmail(toEmail, subject, body);
+    }
+}
+```
+
+##### Bước 5: Test ứng dụng
+http://localhost:8080/send-email?toEmail=test@example.com&subject=Hello&body=This is a test email
+
+
+
+
+
+
+
+
