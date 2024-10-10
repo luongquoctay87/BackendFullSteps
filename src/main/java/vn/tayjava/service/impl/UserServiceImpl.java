@@ -1,6 +1,7 @@
 package vn.tayjava.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import vn.tayjava.controller.request.UserCreationRequest;
 import vn.tayjava.controller.request.UserUpdateRequest;
@@ -41,5 +42,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(int userId) {
        return userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User Not Found"));
+    }
+
+    @Override
+    public UserDetailsService userDetailsService() {
+        return userRepository::findByUsername;
     }
 }
