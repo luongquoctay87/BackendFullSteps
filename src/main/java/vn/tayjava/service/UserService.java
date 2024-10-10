@@ -1,5 +1,6 @@
 package vn.tayjava.service;
 
+import org.springframework.security.core.userdetails.UserDetailsService;
 import vn.tayjava.controller.request.UserCreationRequest;
 import vn.tayjava.controller.request.UserUpdateRequest;
 import vn.tayjava.controller.response.UserResponse;
@@ -18,4 +19,6 @@ public interface UserService {
     List<UserResponse> getAllUsers(String firstName, String lastName, String email);
 
     User getUserById(int userId);
+
+    UserDetailsService userDetailsService();
 }

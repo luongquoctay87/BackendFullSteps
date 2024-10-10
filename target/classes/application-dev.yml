@@ -12,7 +12,7 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
   sendgrid:
     api-key: ${SENDGRID_API_KEY:DUMMY-SENDGRID-API-KEY}
 
@@ -27,3 +27,9 @@ openapi:
     server: http://localhost:${server.port}
     title: Backend service
     version: 1.0.0
+
+jwt:
+  expiryMinutes: 30
+  expiryDay: 14
+  accessKey: c2VjcmV0QGtleS5hcGlfaGFzX2JlZW5fZGVzaWduZWRfYnlfVGF5TFE=
+  refreshKey: 9k1jJAWAKQCnCEz1pwcPNegbHoLugf9hgEnn6sz5pFc=
