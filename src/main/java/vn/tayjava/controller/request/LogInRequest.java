@@ -11,7 +11,7 @@ public class LogInRequest implements Serializable {
 
     private String username;
     private String password;
-    private String deviceType; // web, mobile, tablet
+    private String platform; // web, mobile, tablet
     private String deviceToken; // de push notify
     private String versionApp;
 }

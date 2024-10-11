@@ -1,6 +1,5 @@
 package vn.tayjava.controller.request;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import vn.tayjava.model.Gender;
 
@@ -9,6 +8,7 @@ import java.io.Serializable;
 @Getter
 public class UserUpdateRequest implements Serializable {
 
+    private int id;
     private String firstName;
     private String lastName;
     private String dateOfBirth;

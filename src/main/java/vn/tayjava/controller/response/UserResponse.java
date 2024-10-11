@@ -1,5 +1,6 @@
 package vn.tayjava.controller.response;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import vn.tayjava.model.Gender;
@@ -7,9 +8,10 @@ import vn.tayjava.model.Gender;
 import java.io.Serializable;
 
 @Getter
-@Setter
+@Builder
 public class UserResponse implements Serializable {
 
+    private int id;
     private String firstName;
     private String lastName;
     private String dateOfBirth;

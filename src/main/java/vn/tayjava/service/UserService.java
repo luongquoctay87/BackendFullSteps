@@ -1,6 +1,7 @@
 package vn.tayjava.service;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
+import vn.tayjava.controller.request.ChangePwdRequest;
 import vn.tayjava.controller.request.UserCreationRequest;
 import vn.tayjava.controller.request.UserUpdateRequest;
 import vn.tayjava.controller.response.UserResponse;
@@ -10,13 +11,15 @@ import java.util.List;
 
 public interface UserService {
 
-    long addUser(UserCreationRequest request);
+    int addUser(UserCreationRequest request);
 
-    long updateUser(UserUpdateRequest request);
+    void updateUser(UserUpdateRequest request);
 
-    long deleteUser(int userId);
+    void changePassword(ChangePwdRequest request);
 
-    List<UserResponse> getAllUsers(String firstName, String lastName, String email);
+    void deleteUser(int userId);
+
+    List<UserResponse> getAllUsers();
 
     User getUserById(int userId);
 

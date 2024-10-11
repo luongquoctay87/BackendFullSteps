@@ -18,7 +18,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -29,9 +28,9 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final String[] whitelistedUrls = {"auth/**", "/user/add", "/user/confirm"};
+    private final String[] whitelistedUrls = {"auth/**"};
 
-//    private final CustomizeFilter customizeFilter;
+    private final CustomizeFilter customizeFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -54,7 +53,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request.requestMatchers(whitelistedUrls).permitAll().anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS));
-//        .authenticationProvider(authenticationProvider()).addFilterBefore(customizeFilter, UsernamePasswordAuthenticationFilter.class);
+        //.authenticationProvider(authenticationProvider()).addFilterBefore(customizeFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

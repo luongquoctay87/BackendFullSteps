@@ -16,7 +16,7 @@ public class CustomizeFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info(request.getRequestURI());
+        log.info("doFilterInternal: {}", request.getRequestURI());
 
         filterChain.doFilter(request, response);
     }

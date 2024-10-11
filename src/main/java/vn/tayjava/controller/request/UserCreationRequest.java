@@ -2,11 +2,13 @@ package vn.tayjava.controller.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.ToString;
 import vn.tayjava.model.Gender;
 
 import java.io.Serializable;
 
 @Getter
+@ToString
 public class UserCreationRequest implements Serializable {
 
     private String firstName;

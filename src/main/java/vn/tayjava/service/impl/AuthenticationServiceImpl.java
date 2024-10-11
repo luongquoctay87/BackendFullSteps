@@ -21,10 +21,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public TokenResponse createAccessToken(LogInRequest request) {
         // Get user
-//        User user = userRepository.findByUsername(request.getUsername());
-//        if (user == null) {
-//            throw new UsernameNotFoundException(request.getUsername());
-//        }
+        User user = userRepository.findByUsername(request.getUsername());
+        if (user == null) {
+            throw new UsernameNotFoundException(request.getUsername());
+        }
 
         String accessToken = jwtService.generateToken(1, "admin", null);
         String refreshToken = jwtService.generateRefreshToken(1, "admin", null);
