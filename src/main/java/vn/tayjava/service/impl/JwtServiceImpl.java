@@ -1,18 +1,21 @@
 package vn.tayjava.service.impl;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.validation.Payload;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import vn.tayjava.common.TokenType;
 import vn.tayjava.exception.InvalidDataException;
+import vn.tayjava.repository.UserRepository;
 import vn.tayjava.service.JwtService;
 
 import java.security.Key;
@@ -22,7 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static vn.tayjava.common.TokenType.*;
+import static vn.tayjava.common.TokenType.ACCESS_TOKEN;
+import static vn.tayjava.common.TokenType.REFRESH_TOKEN;
 
 @Service
 @Slf4j(topic = "JWT-SERVICE")
@@ -64,7 +68,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private String generateToken(Map<String, Object> claims, String username) {
-        log.info("---------- generateToken ----------");
+        log.info("----------[ generateToken ]----------");
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)
@@ -75,7 +79,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private String generateRefreshToken(Map<String, Object> claims, String username) {
-        log.info("---------- generateRefreshToken ----------");
+        log.info("----------[ generateRefreshToken ]----------");
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)
@@ -86,7 +90,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private Key getKey(TokenType type) {
-        log.info("---------- getKey ----------");
+        log.info("----------[ getKey ]----------");
         switch (type) {
             case ACCESS_TOKEN -> {
                 return Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessKey));
@@ -105,10 +109,10 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private Claims extraAllClaim(String token, TokenType type) {
-        return Jwts.parserBuilder().setSigningKey(getKey(type)).build().parseClaimsJws(token).getBody();
-    }
-
-    private Date extractExpiration(String token, TokenType type) {
-        return extractClaim(token, type, Claims::getExpiration);
+        try {
+            return Jwts.parserBuilder().setSigningKey(getKey(type)).build().parseClaimsJws(token).getBody();
+        } catch (SignatureException | ExpiredJwtException e) { // Invalid signature or expired token
+            throw new AccessDeniedException("Access denied: " + e.getMessage());
+        }
     }
 }

@@ -25,7 +25,37 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public UserDetailsService userDetailsService() {
+        log.info("userDetailsService");
+        return userRepository::findByUsername;
+    }
+
+    @Override
+    public List<UserResponse> getAllUsers() {
+        log.info("getAllUsers");
+        return userRepository.findAll().stream().map(user ->
+                UserResponse.builder()
+                        .id(user.getId())
+                        .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
+                        .dateOfBirth(user.getDateOfBirth())
+                        .gender(user.getGender())
+                        .phone(user.getPhone())
+                        .email(user.getEmail())
+                        .username(user.getUsername())
+                        .country(user.getCountry())
+                        .language(user.getLanguage())
+                        .build()
+        ).toList();
+    }
+
+    @Override
+    public User getUserById(int userId) {
+        log.info("getUserById: {}", userId);
+        return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+    }
 
     @Override
     public int addUser(UserCreationRequest request) {
@@ -47,7 +77,7 @@ public class UserServiceImpl implements UserService {
         user.setPhone(request.getPhone());
         user.setEmail(request.getEmail());
         user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPassword(UserService.passwordEncoder().encode(request.getPassword()));
         user.setCountry(request.getCountry());
         user.setLanguage(request.getLanguage());
 
@@ -83,10 +113,10 @@ public class UserServiceImpl implements UserService {
         log.info("changePassword: {}", request);
 
         User user = getUserById(request.getId());
-        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())){
+        if (!UserService.passwordEncoder().matches(request.getOldPassword(), user.getPassword())){
             throw new InvalidDataException("Old Password do not match");
         }
-        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setPassword(UserService.passwordEncoder().encode(request.getNewPassword()));
         userRepository.save(user);
     }
 
@@ -94,36 +124,6 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteUser(int userId) {
         log.info("deleteUser: {}", userId);
-
         userRepository.deleteById(userId);
-    }
-
-    @Override
-    public List<UserResponse> getAllUsers() {
-        log.info("getAllUsers");
-        return userRepository.findAll().stream().map(user ->
-                UserResponse.builder()
-                        .id(user.getId())
-                        .firstName(user.getFirstName())
-                        .lastName(user.getLastName())
-                        .dateOfBirth(user.getDateOfBirth())
-                        .gender(user.getGender())
-                        .phone(user.getPhone())
-                        .email(user.getEmail())
-                        .username(user.getUsername())
-                        .country(user.getCountry())
-                        .language(user.getLanguage())
-                        .build()
-        ).toList();
-    }
-
-    @Override
-    public User getUserById(int userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
-    }
-
-    @Override
-    public UserDetailsService userDetailsService() {
-        return userRepository::findByUsername;
     }
 }

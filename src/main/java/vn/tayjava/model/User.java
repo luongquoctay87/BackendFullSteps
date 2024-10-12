@@ -62,9 +62,8 @@ public class User extends BaseEntity implements UserDetails, Serializable {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        List<String> roleList = this.roles.stream().map(role -> role.getRole().getName()).toList();
-//        return roleList.stream().map(SimpleGrantedAuthority::new).toList();
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ADMIN");
+        return List.of(authority);
     }
 
     /**
@@ -104,6 +103,6 @@ public class User extends BaseEntity implements UserDetails, Serializable {
      */
     @Override
     public boolean isEnabled() {
-        return UserStatus.ACTIVE.equals(status);
+        return UserStatus.active.equals(status);
     }
 }
