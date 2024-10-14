@@ -31,7 +31,7 @@ public class AuthenticationController {
     @Operation(summary = "Refresh token", description = "API nay dung de lay token moi")
     @PostMapping("/refresh-token")
     public TokenResponse refreshToken(@RequestBody String refreshToken) {
-        log.info("refreshToken = {}", refreshToken.toString());
+        log.info("refreshToken = {}", refreshToken.substring(0, 20));
         return authenticationService.refreshAccessToken(refreshToken);
     }
 }

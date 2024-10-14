@@ -59,6 +59,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public TokenResponse refreshAccessToken(String request) {
-        return null;
+        return TokenResponse.builder().accessToken("dummy-access-token").refreshToken("dummy-refresh-Token").build();
     }
 }

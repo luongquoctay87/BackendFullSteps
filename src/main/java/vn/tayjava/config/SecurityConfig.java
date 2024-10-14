@@ -25,7 +25,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final String[] whitelistedUrls = {"auth/**"};
+    private final String[] whitelistedUrls = {"auth/**", "/user/**"};
 
     private final CustomizeFilter customizeFilter;
     private final UserService userService;
@@ -35,8 +35,8 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request.requestMatchers(whitelistedUrls).permitAll()
                         .anyRequest().authenticated())
-                .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS));
-//                .authenticationProvider(authenticationProvider()).addFilterBefore(customizeFilter, UsernamePasswordAuthenticationFilter.class);
+                .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
+                .authenticationProvider(authenticationProvider()).addFilterBefore(customizeFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -51,7 +51,7 @@ public class SecurityConfig {
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userService.userDetailsService());
-        provider.setPasswordEncoder(UserService.passwordEncoder());
+        provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
 

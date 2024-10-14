@@ -33,7 +33,7 @@ public class CustomizeFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        log.info("{} {}", request.getMethod(), request.getRequestURI());
+        log.info("{} {}", request.getMethod(), request.getRequestURI());
 //
 //        final String authHeader = request.getHeader(AUTHORIZATION);
 //        if (authHeader != null && authHeader.startsWith("Bearer ")) {
