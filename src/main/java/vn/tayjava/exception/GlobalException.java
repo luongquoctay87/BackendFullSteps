@@ -51,7 +51,8 @@ public class GlobalException {
             MethodArgumentNotValidException.class,
             MissingServletRequestParameterException.class,
             MissingServletRequestParameterException.class,
-            ConstraintViolationException.class})
+            ConstraintViolationException.class,
+            InvalidDataException.class})
     public ErrorResponse handleDataNotValidException(Exception e, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setTimestamp(new Date());

@@ -20,9 +20,9 @@ import vn.tayjava.service.UserService;
 
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
+@Slf4j(topic = "USER-SERVICE")
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -66,8 +66,8 @@ public class UserServiceImpl implements UserService {
             throw new InvalidDataException("Passwords do not match");
         }
 
-        if (userRepository.count() > 0) {
-            throw new InvalidDataException("User already exists");
+        if (userRepository.countByUsername(request.getUsername()) > 0) {
+            throw new InvalidDataException("Username already exists");
         }
 
         User user = new User();

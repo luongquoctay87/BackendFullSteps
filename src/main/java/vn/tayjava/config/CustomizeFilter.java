@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -55,7 +56,7 @@ public class CustomizeFilter extends OncePerRequestFilter {
                 response.getWriter().write(errorResponse(e.getMessage()));
             }
 
-            var user = userService.userDetailsService().loadUserByUsername(username);
+            UserDetails user = userService.userDetailsService().loadUserByUsername(username);
 
            // isAllowed(request.getRequestURI(), user.getAuthorities());
 
