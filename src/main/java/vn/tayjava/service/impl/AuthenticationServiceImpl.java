@@ -8,7 +8,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import vn.tayjava.controller.request.LogInRequest;
@@ -33,10 +32,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         try {
             // Thực hiện xác thực với username và password
-        //    Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+            Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-//            log.info("isAuthenticated = {}", authenticate.isAuthenticated());
-//            log.info("Authorities: {}", authenticate.getAuthorities().toString());
+            log.info("isAuthenticated = {}", authenticate.isAuthenticated());
+            log.info("Authorities: {}", authenticate.getAuthorities().toString());
 
             // Nếu xác thực thành công, lưu thông tin vào SecurityContext
             //SecurityContextHolder.getContext().setAuthentication(authenticate);

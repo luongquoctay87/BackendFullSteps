@@ -25,7 +25,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final String[] whitelistedUrls = {"auth/**", "/user/**"};
+    private final String[] whitelistedUrls = {"auth/**"};
 
     private final CustomizeFilter customizeFilter;
     private final UserService userService;

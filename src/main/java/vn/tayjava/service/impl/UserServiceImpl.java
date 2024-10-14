@@ -14,6 +14,7 @@ import vn.tayjava.controller.response.UserResponse;
 import vn.tayjava.exception.InvalidDataException;
 import vn.tayjava.exception.ResourceNotFoundException;
 import vn.tayjava.model.User;
+import vn.tayjava.model.UserStatus;
 import vn.tayjava.repository.UserRepository;
 import vn.tayjava.service.UserService;
 
@@ -80,6 +81,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(UserService.passwordEncoder().encode(request.getPassword()));
         user.setCountry(request.getCountry());
         user.setLanguage(request.getLanguage());
+        user.setStatus(UserStatus.none);
 
         userRepository.save(user);
 
@@ -104,6 +106,7 @@ public class UserServiceImpl implements UserService {
         user.setUsername(request.getUsername());
         user.setCountry(request.getCountry());
         user.setLanguage(request.getLanguage());
+        user.setStatus(request.getStatus());
 
         userRepository.save(user);
     }

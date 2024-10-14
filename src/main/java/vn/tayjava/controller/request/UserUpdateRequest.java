@@ -2,6 +2,7 @@ package vn.tayjava.controller.request;
 
 import lombok.Getter;
 import vn.tayjava.model.Gender;
+import vn.tayjava.model.UserStatus;
 
 import java.io.Serializable;
 
@@ -17,4 +18,5 @@ public class UserUpdateRequest implements Serializable {
     private String username;
     private String country;
     private String language;
+    private UserStatus status;
 }
