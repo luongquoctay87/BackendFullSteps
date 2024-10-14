@@ -74,33 +74,8 @@ public class CustomizeFilter extends OncePerRequestFilter {
     }
 
     boolean isAllowed(String apiUrl, Collection<? extends GrantedAuthority> roles) {
-        String ROLE_ADMIN = "ROLE_ADMIN";
-        String ROLE_EDITOR = "ROLE_EDITOR";
-        String ROLE_AUTHOR = "ROLE_AUTHOR";
-        String ROLE_CONTRIBUTOR = "ROLE_CONTRIBUTOR";
-        String ROLE_SUBSCRIBER = "ROLE_SUBSCRIBER";
-
-        if (roles.contains(ROLE_ADMIN)) {
-            return true;
-        }
-
-        if (roles.contains(ROLE_EDITOR)) {
-
-        }
-
-        if (roles.contains(ROLE_AUTHOR)) {
-
-        }
-
-        if (roles.contains(ROLE_CONTRIBUTOR)) {
-
-        }
-
-        if (roles.contains(ROLE_SUBSCRIBER)) {
-
-        }
-
-        return false;
+        // TODO: get data from database
+        return true;
     }
 
     /**
