@@ -31,3 +31,13 @@ logging:
   level:
     root: INFO
     web: INFO
+    org.springframework: OFF
+#  file:
+#    name: ${spring.application.name}.log
+#  logback:
+#    rollingpolicy:
+#      file-name-pattern: backend-service-%d{yyyy-MM-dd}.%i.log
+#      max-file-size: 1MB
+#      total-size-cap: 10MB
+#      max-history: 30
+#      clean-history-on-start: true

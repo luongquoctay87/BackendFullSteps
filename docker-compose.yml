@@ -1,36 +1,72 @@
-version: "3.9"
-
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    cap_add:
-      - SYS_NICE
+#  mysql:
+#    image: mysql:8.0
+#    container_name: mysql
+#    cap_add:
+#      - SYS_NICE
+#    restart: always
+#    environment:
+#      - MYSQL_DATABASE=testdb
+#      - MYSQL_ROOT_PASSWORD=password
+#    ports:
+#      - '3306:3306'
+#    volumes:
+#      - mysql_data:/var/lib/mysql
+#      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+#    networks:
+#      - default
+
+  elastic-search:
+    image: elasticsearch:7.14.1
+    container_name: elasticsearch
     restart: always
-    environment:
-      - MYSQL_DATABASE=testdb
-      - MYSQL_ROOT_PASSWORD=password
     ports:
-      - '3306:3306'
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
     networks:
       - default
 
-  backend-service:
-    container_name: backend-service
-    build:
-      context: ./
-      dockerfile: Dockerfile
+  kibana:
+    image: kibana:7.14.1
+    container_name: kibana
+    restart: always
     ports:
-      - "8080:8080"
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elastic-search:9200
     networks:
-    - default
+      - default
+
+  logstash:
+    image: logstash:7.14.1
+    container_name: logstash
+    restart: always
+    ports:
+      - "5044:5044"
+    volumes: # mount to folder /tmp and create new directory /workspace/logs in container.
+      - /tmp:/workspace/logs
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      - LOG_PATH=/workspace/logs
+      - XPACK_MONITORING_ELASTICSEARCH_HOSTS=http://elastic-search:9200
+      - XPACK_MONITORING_ENABLED=true
+    networks:
+      - default
+
+#  backend-service:
+#    container_name: backend-service
+#    build:
+#      context: ./
+#      dockerfile: Dockerfile
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - default
 
 networks:
   default:
-    name: backend-service
+    name: backend-service-network
 
 volumes:
   mysql_data:
