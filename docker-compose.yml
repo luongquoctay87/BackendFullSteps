@@ -1,36 +1,109 @@
-version: "3.9"
-
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    cap_add:
-      - SYS_NICE
-    restart: always
-    environment:
-      - MYSQL_DATABASE=testdb
-      - MYSQL_ROOT_PASSWORD=password
-    ports:
-      - '3306:3306'
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
-    networks:
-      - default
+#  mysql:
+#    image: mysql:8.0
+#    container_name: mysql
+#    cap_add:
+#      - SYS_NICE
+#    restart: always
+#    environment:
+#      - MYSQL_DATABASE=testdb
+#      - MYSQL_ROOT_PASSWORD=password
+#    ports:
+#      - '3306:3306'
+#    volumes:
+#      - mysql_data:/var/lib/mysql
+#      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+#    networks:
+#      - default
 
   backend-service:
     container_name: backend-service
     build:
       context: ./
       dockerfile: Dockerfile
+    environment:
+      - LOGSTASH_HOST=logstash:5600
     ports:
-      - "8080:8080"
+      - '8080:8080'
+    depends_on:
+      logstash:
+        condition: service_started
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: ms-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - '22181:2181'
     networks:
-    - default
+      - default
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: ms-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - '29092:29092'
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - default
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: ms-kafka-ui
+    ports:
+      - "9091:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: ms-kafka:9092  # Internal service communication
+    depends_on:
+      - kafka
+    networks:
+      - default
+
+
+  elastic-search:
+    image: elasticsearch:7.14.1
+    container_name: elasticsearch
+    restart: always
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+  kibana:
+    image: kibana:7.14.1
+    container_name: kibana
+    restart: always
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elastic-search:9200
+  logstash:
+    image: logstash:7.14.1
+    container_name: logstash
+    restart: always
+    ports:
+      - "5600:5600" # Socket port
+      - "5044:5044"
+    #      - "9600:9600"
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      - XPACK_MONITORING_ELASTICSEARCH_HOSTS=http://elastic-search:9200
+      - XPACK_MONITORING_ENABLED=true
 
 networks:
   default:
-    name: backend-service
+    name: backend-service-network
 
 volumes:
   mysql_data:

@@ -21,10 +21,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import vn.tayjava.common.TokenType;
 import vn.tayjava.controller.response.ApiErrorResponse;
+import vn.tayjava.model.LogInfo;
 import vn.tayjava.service.JwtService;
 import vn.tayjava.service.UserService;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 
@@ -41,6 +43,9 @@ public class CustomizeFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("{} {}", request.getMethod(), request.getRequestURI());
+
+        // Gán request ID
+        RequestContext.setCurrentRequest(LogInfo.builder().requestId(String.valueOf(Instant.now().getNano())).timestamp(new Date()).build());
 
         final String authHeader = request.getHeader(AUTHORIZATION);
         if (StringUtils.hasLength(authHeader) && authHeader.startsWith("Bearer ")) {

@@ -7,12 +7,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.tayjava.config.RequestContext;
 import vn.tayjava.controller.request.ChangePwdRequest;
 import vn.tayjava.controller.request.UserCreationRequest;
 import vn.tayjava.controller.request.UserUpdateRequest;
 import vn.tayjava.controller.response.UserResponse;
 import vn.tayjava.exception.InvalidDataException;
 import vn.tayjava.exception.ResourceNotFoundException;
+import vn.tayjava.model.LogInfo;
+import vn.tayjava.model.LogMessage;
 import vn.tayjava.model.User;
 import vn.tayjava.model.UserStatus;
 import vn.tayjava.repository.UserRepository;
@@ -35,7 +38,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponse> getAllUsers() {
-        log.info("getAllUsers");
+        //log.info("getAllUsers");
+
+        LogInfo logInfo = RequestContext.getCurrentRequest();
+        LogMessage logMessage = logInfo.getLogMessage();
+        logMessage.setService("-- getAllUsers --");
+        RequestContext.setCurrentRequest(logInfo);
+
         return userRepository.findAll().stream().map(user ->
                 UserResponse.builder()
                         .id(user.getId())
