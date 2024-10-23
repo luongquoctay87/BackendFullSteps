@@ -5,9 +5,9 @@ spring:
   application:
     name: backend-service
   profiles:
-    active: prod
+    active: dev
 
-management: # Health check
+management:
   endpoints:
     web:
       exposure:
