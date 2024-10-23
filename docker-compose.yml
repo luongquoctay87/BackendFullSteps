@@ -1,20 +1,20 @@
 services:
-#  mysql:
-#    image: mysql:8.0
-#    container_name: mysql
-#    cap_add:
-#      - SYS_NICE
-#    restart: always
-#    environment:
-#      - MYSQL_DATABASE=testdb
-#      - MYSQL_ROOT_PASSWORD=password
-#    ports:
-#      - '3306:3306'
-#    volumes:
-#      - mysql_data:/var/lib/mysql
-#      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
-#    networks:
-#      - default
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    cap_add:
+      - SYS_NICE
+    restart: always
+    environment:
+      - MYSQL_DATABASE=testdb
+      - MYSQL_ROOT_PASSWORD=password
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+    networks:
+      - default
 
   backend-service:
     container_name: backend-service
@@ -23,6 +23,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - LOGSTASH_HOST=logstash:5600
+      - MYSQL_URL=jdbc:mysql://mysql:3306/testdb?allowPublicKeyRetrieval=true&useSSL=false
     ports:
       - '8080:8080'
     depends_on:
