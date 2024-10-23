@@ -2,8 +2,6 @@ package vn.tayjava.controller.response;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
